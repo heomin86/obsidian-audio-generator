@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-audio-generator",
+  "name": "Audio Generator",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Generate high-quality audio from notes using AI summarization (XAI, OpenAI, Anthropic, Gemini) and ElevenLabs TTS",
+  "author": "heomin",
+  "authorUrl": "https://github.com/heomin",
+  "isDesktopOnly": true
+}

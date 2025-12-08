@@ -1,0 +1,20 @@
+# Build artifacts (main.js included for release)
+*.js.map
+
+# npm
+node_modules/
+
+# User settings
+data.json
+
+# IDE
+.idea/
+.vscode/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
