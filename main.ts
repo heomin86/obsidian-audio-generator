@@ -67,7 +67,27 @@ export default class AudioGeneratorPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const saved = await this.loadData();
+    this.settings = this.deepMerge(DEFAULT_SETTINGS, saved || {});
+  }
+
+  private deepMerge(defaults: any, overrides: any): any {
+    const result = { ...defaults };
+    for (const key of Object.keys(overrides)) {
+      if (
+        overrides[key] &&
+        typeof overrides[key] === 'object' &&
+        !Array.isArray(overrides[key]) &&
+        defaults[key] &&
+        typeof defaults[key] === 'object' &&
+        !Array.isArray(defaults[key])
+      ) {
+        result[key] = this.deepMerge(defaults[key], overrides[key]);
+      } else {
+        result[key] = overrides[key];
+      }
+    }
+    return result;
   }
 
   async saveSettings(): Promise<void> {
@@ -135,7 +155,9 @@ export default class AudioGeneratorPlugin extends Plugin {
       new Notice(`Audio generated successfully: ${audioPath}`);
     } catch (error) {
       console.error('Audio generation failed:', error);
-      new Notice(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      new Notice(`Audio generation failed: ${errorMsg}`, 10000);
+      console.error('Full error details:', JSON.stringify(error, null, 2));
     }
   }
 

@@ -2,6 +2,7 @@ import { requestUrl, RequestUrlParam } from 'obsidian';
 import { ElevenLabsConfig, VoiceSettings } from '../../types/elevenlabs';
 
 const ELEVENLABS_API_BASE = 'https://api.elevenlabs.io/v1';
+const MAX_CHARS_PER_REQUEST = 4500;
 
 export class ElevenLabsService {
   private apiKey: string;
@@ -26,6 +27,23 @@ export class ElevenLabsService {
 
     const settings = voiceSettings || defaultSettings;
 
+    // Split long text into chunks to avoid ElevenLabs character limit
+    if (text.length > MAX_CHARS_PER_REQUEST) {
+      const chunks = this.splitTextIntoChunks(text, MAX_CHARS_PER_REQUEST);
+      const audioBuffers: ArrayBuffer[] = [];
+
+      for (const chunk of chunks) {
+        const buffer = await this.requestTTS(chunk, settings);
+        audioBuffers.push(buffer);
+      }
+
+      return this.concatenateAudioBuffers(audioBuffers);
+    }
+
+    return this.requestTTS(text, settings);
+  }
+
+  private async requestTTS(text: string, settings: VoiceSettings): Promise<ArrayBuffer> {
     const params: RequestUrlParam = {
       url: `${ELEVENLABS_API_BASE}/text-to-speech/${this.voiceId}?output_format=${this.outputFormat}`,
       method: 'POST',
@@ -50,10 +68,61 @@ export class ElevenLabsService {
     return response.arrayBuffer;
   }
 
+  private splitTextIntoChunks(text: string, maxLength: number): string[] {
+    const chunks: string[] = [];
+    const sentences = text.split(/(?<=[.!?。\n])\s*/);
+    let currentChunk = '';
+
+    for (const sentence of sentences) {
+      if (currentChunk.length + sentence.length > maxLength) {
+        if (currentChunk.length > 0) {
+          chunks.push(currentChunk.trim());
+          currentChunk = '';
+        }
+        // If a single sentence is longer than maxLength, split it further
+        if (sentence.length > maxLength) {
+          const words = sentence.split(/\s+/);
+          for (const word of words) {
+            if (currentChunk.length + word.length + 1 > maxLength) {
+              if (currentChunk.length > 0) {
+                chunks.push(currentChunk.trim());
+                currentChunk = '';
+              }
+            }
+            currentChunk += (currentChunk ? ' ' : '') + word;
+          }
+        } else {
+          currentChunk = sentence;
+        }
+      } else {
+        currentChunk += (currentChunk ? ' ' : '') + sentence;
+      }
+    }
+
+    if (currentChunk.trim().length > 0) {
+      chunks.push(currentChunk.trim());
+    }
+
+    return chunks;
+  }
+
+  private concatenateAudioBuffers(buffers: ArrayBuffer[]): ArrayBuffer {
+    const totalLength = buffers.reduce((sum, buf) => sum + buf.byteLength, 0);
+    const result = new Uint8Array(totalLength);
+    let offset = 0;
+
+    for (const buffer of buffers) {
+      result.set(new Uint8Array(buffer), offset);
+      offset += buffer.byteLength;
+    }
+
+    return result.buffer;
+  }
+
   async validateApiKey(): Promise<boolean> {
     try {
       const params: RequestUrlParam = {
-        url: `${ELEVENLABS_API_BASE}/user`,
+        url: `${ELEVENLABS_API_BASE}/models`,
         method: 'GET',
         headers: {
           'xi-api-key': this.apiKey,
