@@ -41,7 +41,7 @@ export const DEFAULT_SETTINGS: AudioGeneratorSettings = {
       },
       anthropic: {
         apiKey: '',
-        model: 'claude-sonnet-4',
+        model: 'claude-sonnet-4-5-20250929',
         enabled: false
       },
       gemini: {
@@ -77,7 +77,7 @@ export const PROVIDER_METADATA: ProviderMetadata[] = [
     label: 'xAI (Grok)',
     description: 'Fast reasoning with Grok models',
     defaultModel: 'grok-4-1-fast-reasoning',
-    models: ['grok-4-1-fast-reasoning', 'grok-4-1-fast', 'grok-3-mini-fast-reasoning'],
+    models: ['grok-4-1-fast-reasoning', 'grok-4-1-fast-non-reasoning', 'grok-4-1-fast'],
     docsUrl: 'https://console.x.ai',
     placeholderKey: 'xai-...'
   },
@@ -94,8 +94,8 @@ export const PROVIDER_METADATA: ProviderMetadata[] = [
     id: 'anthropic',
     label: 'Anthropic (Claude)',
     description: 'Claude Sonnet and other models',
-    defaultModel: 'claude-sonnet-4',
-    models: ['claude-sonnet-4', 'claude-3-5-sonnet-20241022', 'claude-3-haiku-20240307'],
+    defaultModel: 'claude-sonnet-4-5-20250929',
+    models: ['claude-opus-4-6', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5-20251001', 'claude-sonnet-4-20250514'],
     docsUrl: 'https://console.anthropic.com/settings/keys',
     placeholderKey: 'sk-ant-...'
   },
@@ -104,7 +104,7 @@ export const PROVIDER_METADATA: ProviderMetadata[] = [
     label: 'Google Gemini',
     description: 'Gemini Flash and Pro models',
     defaultModel: 'gemini-2.5-flash',
-    models: ['gemini-2.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-pro'],
+    models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash-exp'],
     docsUrl: 'https://aistudio.google.com/app/apikey',
     placeholderKey: 'AIza...'
   }

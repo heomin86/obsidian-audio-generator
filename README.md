@@ -79,6 +79,13 @@ MIT License
 
 ## 버전
 
+- **1.0.1**: 모델 업데이트 (2026-02-16)
+  - Claude 모델명 수정 (claude-sonnet-4 → claude-sonnet-4-5-20250929)
+  - 최신 AI 모델 지원 추가
+    - Anthropic: Claude Opus 4.6, Sonnet 4.5, Haiku 4.5
+    - xAI: Grok 4.1 Fast Reasoning, Grok 4.1 Fast Non-Reasoning
+    - Gemini: 2.5 Flash, 2.5 Pro
+  - 버그 수정: 잘못된 모델 ID로 인한 API 오류 해결
 - **1.0.0**: 초기 릴리스
   - 4개 AI 제공업체 지원 (XAI, OpenAI, Anthropic, Gemini)
   - ElevenLabs TTS 통합

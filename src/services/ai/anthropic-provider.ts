@@ -9,7 +9,7 @@ export class AnthropicProvider implements AIClient {
 
   constructor(apiKey: string, model: string) {
     this.apiKey = apiKey;
-    this.model = model || 'claude-sonnet-4';
+    this.model = model || 'claude-sonnet-4-5-20250929';
   }
 
   async generateText(userPrompt: string, systemPrompt: string, temperature = 0.3): Promise<string> {
